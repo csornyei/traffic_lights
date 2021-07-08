@@ -21,6 +21,7 @@ describe('Buffer Interpreter', () => {
 
     it('should throw an error if the first byte is not 1 or 2', () => {
         const bytes = Array(11);
+        bytes[10] = 255;
         expect(() => interpreter(Buffer.from(bytes))).toThrow("The buffer must start with 0x01 or 0x02");
     });
 

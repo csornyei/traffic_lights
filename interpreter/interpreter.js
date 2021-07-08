@@ -36,6 +36,7 @@ function getIdFromBuffer(buffer) {
     if (id > 60000) {
         throw new Error("The ID can't be larger than 60000")
     }
+    return id;
 }
 
 function getTimestampFromBuffer(buffer) {
@@ -74,25 +75,24 @@ function getStateContent(byte) {
 
 function getErrorContent(byte) {
     const errors = [];
-    let contentByte = buffer[9];
     // setting the 0b1000101 is 69 where all three error bit is on
     // anything bigger than this is invalid
-    if (contentByte > 69 || contentByte === 0) {
+    if (byte > 69 || byte === 0) {
         throw new Error("Invalid content!");
     }
-    if (contentByte >= 64) {
+    if (byte >= 64) {
         errors.push("Bandwidth Error");
-        contentByte -= 64;
+        byte -= 64;
     }
-    if (contentByte >= 4) {
+    if (byte >= 4) {
         errors.push("Traffic Light Error");
-        contentByte -= 4;
+        byte -= 4;
     }
-    if (contentByte >= 1) {
+    if (byte >= 1) {
         errors.push("Internal Sensor Error");
-        contentByte -= 1;
+        byte -= 1;
     }
-    if (contentByte > 0) {
+    if (byte > 0) {
         throw new Error("Invalid content!");
     }
     return errors;
