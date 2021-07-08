@@ -34,7 +34,15 @@ function interpreter(buffer) {
     message["id"] = id;
 
     const timestamp = buffer.slice(5, 9).toJSON().data.reduce(bytesToNumber);
-    message["timestamp"] = timestamp;
+    const date = new Date(timestamp * 1000);
+    const year = date.getFullYear();
+    const month = date.getMonth() < 9 ? `0${date.getMonth() + 1}` : `${date.getMonth() + 1}`;
+    const day = date.getDate() < 10 ? `0${date.getDate()}` : `${date.getDate()}`;
+    const hour = date.getHours() < 10 ? `0${date.getHours()}` : `${date.getHours()}`;
+    const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : `${date.getMinutes()}`;
+    const seconds = date.getSeconds() < 10 ? `0${date.getSeconds()}` : `${date.getSeconds()}`;
+    const formatedDate = `${year}-${month}-${day} ${hour}:${minutes}:${seconds}`;
+    message["timestamp"] = formatedDate;
 
     if (message.type === "state") {
         switch (buffer[9]) {
