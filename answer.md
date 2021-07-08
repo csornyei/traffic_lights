@@ -29,6 +29,9 @@ The main benefit of this solution is that the schema is easily extendedable. Bec
 Storing the logins in a different collection would solve this problem. However, this would lead to a referenced relationship which results in using multiple queries.
 
 As the system should be able to handle this amount of data I thought multiple tables are needed to store the information. I choose relational database for solution as it's purpose is to map the connection between tables.
+
 I tried to have the simplest solution so my database looks like this:
+
 ![Database schema](./sensors-database.png)
+
 There is a one-to-many relationship between the sensor and the status table. The status_type enum contains two values: "status" and "error". I also added an SQL file which contains simple queries for the given requirements.
