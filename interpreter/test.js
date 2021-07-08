@@ -44,7 +44,7 @@ describe('Buffer Interpreter', () => {
         const bytes = [
             1,
             1, 1, 0, 0,
-            ...numberToBytes(Math.floor(Date.now() / 1000)),
+            ...numberToBytes(Math.floor(new Date(2020, 0, 1, 12, 35, 3) / 1000)),
             16,
             255
         ];
@@ -55,7 +55,7 @@ describe('Buffer Interpreter', () => {
         const bytes = [
             2,
             1, 1, 0, 0,
-            ...numberToBytes(Math.floor(Date.now() / 1000)),
+            ...numberToBytes(Math.floor(new Date(2020, 0, 1, 12, 35, 3) / 1000)),
             70,
             255
         ];
@@ -69,7 +69,7 @@ describe('Buffer Interpreter', () => {
     })
 
     it('should interpret the message correctly', () => {
-        const now = Math.floor(Date.now() / 1000);
+        const now = Math.floor(new Date(2020, 0, 1, 12, 35, 3) / 1000);
         let bytes = [
             1,
             0, 1, 0, 0,
@@ -81,7 +81,7 @@ describe('Buffer Interpreter', () => {
         expect(interpreter(Buffer.from(bytes))).toStrictEqual({
             type: "state",
             id: 256,
-            timestamp: now,
+            timestamp: "2020-01-01 12:35:03",
             content: "red",
         });
 
@@ -96,7 +96,7 @@ describe('Buffer Interpreter', () => {
         expect(interpreter(Buffer.from(bytes))).toStrictEqual({
             type: "state",
             id: 256,
-            timestamp: now,
+            timestamp: "2020-01-01 12:35:03",
             content: "unknown state",
         });
 
@@ -111,7 +111,7 @@ describe('Buffer Interpreter', () => {
         expect(interpreter(Buffer.from(bytes))).toStrictEqual({
             type: "error",
             id: 256,
-            timestamp: now,
+            timestamp: "2020-01-01 12:35:03",
             content: [
                 "Bandwidth Error",
                 "Traffic Light Error",
