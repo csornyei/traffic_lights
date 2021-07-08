@@ -39,4 +39,84 @@ describe('Buffer Interpreter', () => {
         bytes[3] = 1;
         expect(() => interpreter(Buffer.from(bytes))).toThrow("The ID can't be larger than 60000");
     });
+
+    it('should throw an error if it\'s state and the content is wrong', () => {
+        const bytes = [
+            1,
+            1, 1, 0, 0,
+            ...numberToBytes(Math.floor(Date.now() / 1000)),
+            16,
+            255
+        ];
+        expect(() => interpreter(Buffer.from(bytes))).toThrow("Invalid content!");
+    });
+
+    it('should throw an error if it\'s error and the content is wrong', () => {
+        const bytes = [
+            2,
+            1, 1, 0, 0,
+            ...numberToBytes(Math.floor(Date.now() / 1000)),
+            70,
+            255
+        ];
+        expect(() => interpreter(Buffer.from(bytes))).toThrow("Invalid content!");
+
+        bytes[9] = 0;
+        expect(() => interpreter(Buffer.from(bytes))).toThrow("Invalid content!");
+
+        bytes[9] = 16;
+        expect(() => interpreter(Buffer.from(bytes))).toThrow("Invalid content!");
+    })
+
+    it('should interpret the message correctly', () => {
+        const now = Math.floor(Date.now() / 1000);
+        let bytes = [
+            1,
+            0, 1, 0, 0,
+            ...numberToBytes(now),
+            1,
+            255
+        ];
+
+        expect(interpreter(Buffer.from(bytes))).toStrictEqual({
+            type: "state",
+            id: 256,
+            timestamp: now,
+            content: "red",
+        });
+
+        bytes = [
+            1,
+            0, 1, 0, 0,
+            ...numberToBytes(now),
+            255,
+            255
+        ];
+
+        expect(interpreter(Buffer.from(bytes))).toStrictEqual({
+            type: "state",
+            id: 256,
+            timestamp: now,
+            content: "unknown state",
+        });
+
+        bytes = [
+            2,
+            0, 1, 0, 0,
+            ...numberToBytes(now),
+            69,
+            255
+        ];
+
+        expect(interpreter(Buffer.from(bytes))).toStrictEqual({
+            type: "error",
+            id: 256,
+            timestamp: now,
+            content: [
+                "Bandwidth Error",
+                "Traffic Light Error",
+                "Internal Sensor Error"
+            ],
+        });
+    })
 })
