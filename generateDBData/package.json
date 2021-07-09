@@ -1,0 +1,13 @@
+{
+  "name": "generate-db-data",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "Mate Csornyei <mate@csornyei.com> (https://csornyei.com/)",
+  "license": "ISC",
+  "devDependencies": {
+    "faker": "^5.5.3"
+  }
+}
