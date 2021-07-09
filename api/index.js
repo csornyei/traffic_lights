@@ -9,7 +9,7 @@ app.use(json());
 app.use("/api", router);
 app.all("*", (_, res) => {
     res.status(404).send({
-        error: "Page not found"
+        error: "Not found"
     });
 });
 
