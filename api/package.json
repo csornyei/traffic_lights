@@ -1,0 +1,20 @@
+{
+  "name": "sensor_api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --watchAll --no-cache",
+    "start": "node index.js",
+    "dev": "npx nodemon index.js"
+  },
+  "author": "Mate Csornyei <mate@csornyei.com> (https://csornyei.com/)",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "jest": "^27.0.6",
+    "supertest": "^6.1.3"
+  }
+}
