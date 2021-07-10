@@ -30,9 +30,10 @@ function Map({ center, zoom }) {
     return (
         <div style={{ height: '100vh', width: '100%' }}>
             <GoogleMapReact
-                bootstrapURLKeys={{ key: "AIzaSyB9ML8pQwo00zI0Z-z1JxY0tqZzrmZ1ns8" }}
+                bootstrapURLKeys={{ key: process.env.REACT_APP_GOOGLE_MAPS_API }}
                 defaultCenter={center}
                 defaultZoom={zoom}
+                hoverDistance={30}
             >
                 {mapMarkers}
             </GoogleMapReact>

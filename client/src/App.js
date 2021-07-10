@@ -4,7 +4,7 @@ function App() {
   return (
     <div>
       <Map
-        zoom={13}
+        zoom={11}
         center={{
           lat: 52.3558,
           lng: 4.8884
