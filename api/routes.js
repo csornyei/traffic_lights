@@ -5,7 +5,20 @@ const logins = require("./logins.json");
 const router = Router();
 
 router.get("/", (_, res) => {
-    res.send(sensorData);
+    const sensorDataWithLastStatus = sensorData.map(data => {
+        const sensorLogins = logins.filter(login => login.sensor_id === data.id && login.type === "status");
+        let latest = sensorLogins[0];
+        sensorLogins.forEach(login => {
+            if (new Date(login.created_at) > new Date(latest.created_at)) {
+                latest = login;
+            }
+        });
+        return {
+            ...data,
+            status: latest
+        };
+    })
+    res.send(sensorDataWithLastStatus);
 });
 
 router.get("/:id", (req, res) => {
