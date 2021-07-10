@@ -1,6 +1,20 @@
 const { Router } = require("express");
 const sensorData = require("./sensors.json");
-const logins = require("./logins.json");
+const logins = require("./logins.json").map(login => {
+    /*  I created a mockup JSON,
+        but as I later saw the client side require
+        to show data for the last 2 weeks
+        So I decided to make sure there is data
+        for this time period
+    */
+    const THREE_WEEKS_IN_MS = 3 * 7 * 24 * 60 * 60 * 1000;
+    const dateThreeWeeksAgo = Date.now() - THREE_WEEKS_IN_MS;
+    login.created_at = Math.floor(
+        Math.random() * (
+            Date.now() - (dateThreeWeeksAgo)
+        ) + dateThreeWeeksAgo);
+    return login;
+});
 
 const router = Router();
 
