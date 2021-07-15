@@ -2,12 +2,14 @@ const { query } = require("./queries");
 
 const getAllSensor = () => {
     return new Promise((resolve, reject) => {
-        query("SELECT * FROM sensor", (error, result) => {
-            if (error) {
-                reject(error);
-            }
-            resolve(result);
-        });
+        query(
+            "SELECT * FROM sensor JOIN (SELECT DISTINCT ON(sensor_id) * FROM login ORDER BY sensor_id, created_at DESC) as lgn ON lgn.sensor_id = sensor.id;",
+            (error, result) => {
+                if (error) {
+                    reject(error);
+                }
+                resolve(result);
+            });
     })
 }
 
