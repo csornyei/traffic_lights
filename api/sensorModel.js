@@ -66,9 +66,50 @@ const updateSensorPosition = (sensorId, latitude, longitude) => {
     })
 }
 
+const createNewLogin = (logins) => {
+    let queryString = "INSERT INTO login(sensor_id, type, content) VALUES";
+    const queryParams = [];
+    let paramCounter = 1;
+    logins.forEach(({ id, type, content }, idx, arr) => {
+        if (idx === arr.length - 1) {
+            queryString += ` ($${paramCounter}, $${paramCounter + 1}, $${paramCounter + 2})`;
+        } else {
+            queryString += ` ($${paramCounter}, $${paramCounter + 1}, $${paramCounter + 2}),`;
+        }
+        paramCounter += 3;
+        queryParams.push(id);
+        queryParams.push(type);
+        queryParams.push(content);
+    });
+    return new Promise((resolve, reject) => {
+        query(
+            queryString,
+            queryParams,
+            (error, result) => {
+                if (error) {
+                    reject(error);
+                }
+                resolve(result);
+            })
+    })
+}
+
+const removeOldLogins = (before) => {
+    return new Promise((resolve, reject) => {
+        query("DELETE FROM login WHERE created_at < $1", [before], (error, result) => {
+            if (error) {
+                reject(error);
+            }
+            resolve(result);
+        })
+    });
+}
+
 module.exports = {
     getSensorIDs,
     getAllSensor,
+    createNewLogin,
+    removeOldLogins,
     getSensorLogins,
     updateSensorPosition
 }

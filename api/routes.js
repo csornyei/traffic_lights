@@ -4,7 +4,10 @@ const {
     getSensorLogins,
     updateSensorPosition
 } = require("./sensorModel");
-const { getSensorStatus } = require("./socketApi");
+const {
+    getSensorStatus,
+    createLogin
+} = require("./socketApi");
 
 const router = Router();
 
@@ -26,11 +29,6 @@ router.get("/", (_, res) => {
             })
         });
 });
-
-router.get("/:id/status", (req, res) => {
-    getSensorStatus(req.params.id);
-    res.send("Hello");
-})
 
 router.get("/:id", (req, res) => {
     const { start, end } = req.query;
@@ -77,6 +75,6 @@ router.put("/:id", (req, res) => {
                 error: "Internal server error"
             });
         });
-})
+});
 
 module.exports = router;
