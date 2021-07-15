@@ -11,7 +11,7 @@ function reducer(state, { type, payload }) {
 const initialState = {
     socket: process.env.NODE_ENV === "development" ?
         socketClient("http://localhost:8000") :
-        socketClient("http://localhost:8000")
+        socketClient()
 };
 
 export const StateContext = createContext(initialState);

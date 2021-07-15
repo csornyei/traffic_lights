@@ -77,7 +77,7 @@ function createNewLogins() {
     setTimeout(createNewLogins, CREATE_NEW_LOGIN_TIMEOUT * (Math.random() * 5 + 1))
 }
 
-const socket = io.connect("http://localhost:8000", {
+const socket = io.connect("https://traffic-lights-csornyei.herokuapp.com/", {
     reconnect: true,
     auth: {
         token: process.env.SENSOR_CLIENT_SECRET
@@ -92,13 +92,14 @@ socket.on(EVENTS.SENSOR_IDS, (ids) => {
 });
 
 socket.on(EVENTS.REQ_SENSOR_STATUS, (id) => {
+    console.log(EVENTS.REQ_SENSOR_STATUS, id);
     const rand = Math.random();
     let status = "unknown state";
-    if (rand > 0.75) {
+    if (rand > 0.6) {
         status = "red";
     } else if (rand > 0.5) {
         status = "yellow";
-    } else if (rand > 0.25) {
+    } else if (rand > 0.1) {
         status = "green"
     }
     socket.emit(EVENTS.RES_SENSOR_STATUS,
