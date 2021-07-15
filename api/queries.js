@@ -1,10 +1,10 @@
+require("dotenv").config();
 const Pool = require("pg").Pool;
 const pool = new Pool({
-    user: "api_user",
-    host: "localhost",
-    database: "sensors",
-    password: "apiUser",
-    port: 5432
+    user: process.env.DATABASE_USER,
+    host: process.env.DATABASE_HOST,
+    database: process.env.DATABASE_DBNAME,
+    password: process.env.DATABASE_PASSWORD
 });
 
 module.exports = {
