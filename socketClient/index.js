@@ -18,7 +18,16 @@ const REMOVE_OLD_LOGIN_TIMEOUT = 1000 * 60 * 60 * 24 * 5;
 const CREATE_NEW_LOGIN_TIMEOUT = 1000 * 60;
 
 function removeOldLogins() {
-    socket.emit(EVENTS.REMOVE_OLD_LOGINS);
+    const before = new Date(Date.now() - 1000 * 60 * 60 * 24 * 5);
+
+    const year = before.getFullYear();
+    const month = before.getMonth() < 9 ? `0${before.getMonth() + 1}` : `${before.getMonth()}`;
+    const day = before.getDate() < 10 ? `0${before.getDate()}` : `${before.getDate()}`;
+    const hour = before.getHours() < 10 ? `0${before.getHours()}` : `${before.getHours()}`;
+    const minutes = before.getMinutes() < 10 ? `0${before.getMinutes()}` : `${before.getMinutes()}`;
+    const seconds = before.getSeconds() < 10 ? `0${before.getSeconds()}` : `${before.getSeconds()}`;
+
+    socket.emit(EVENTS.REMOVE_OLD_LOGINS, `${year}-${month}-${day} ${hour}:${minutes}:${seconds}`);
     console.log("Removing old logins");
     setTimeout(removeOldLogins, REMOVE_OLD_LOGIN_TIMEOUT);
 }
