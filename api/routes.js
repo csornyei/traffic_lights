@@ -1,4 +1,9 @@
 const { Router } = require("express");
+const {
+    getAllSensor,
+    getSensorLogins,
+    updateSensorPosition
+} = require("./sensorModel");
 const sensorData = require("./sensors.json");
 const logins = require("./logins.json").map(login => {
     /*  I created a mockup JSON,
@@ -19,44 +24,42 @@ const logins = require("./logins.json").map(login => {
 const router = Router();
 
 router.get("/", (_, res) => {
-    const sensorDataWithLastStatus = sensorData.map(data => {
-        const sensorLogins = logins.filter(login => login.sensor_id === data.id && login.type === "status");
-        let latest = sensorLogins[0];
-        sensorLogins.forEach(login => {
-            if (new Date(login.created_at) > new Date(latest.created_at)) {
-                latest = login;
+    getAllSensor()
+        .then(({ rows }) => {
+            if (rows.length > 0) {
+                res.send(rows);
+            } else {
+                res.send({
+                    error: "There are no sensors"
+                })
             }
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).send({
+                error: "Internal server error"
+            })
         });
-        return {
-            ...data,
-            status: latest
-        };
-    })
-    res.send(sensorDataWithLastStatus);
 });
 
 router.get("/:id", (req, res) => {
     const { start, end } = req.query;
     const { id } = req.params;
 
-    let filteredLogins = logins.filter(login => `${login.sensor_id}` === id);
-
-    if (filteredLogins.length === 0) {
-        res.status(404).send({
-            error: "Not found"
-        });
-        return;
-    }
-
-    if (start) {
-        filteredLogins = filteredLogins.filter(login => new Date(login.created_at) > new Date(parseInt(start)));
-    }
-
-    if (end) {
-        filteredLogins = filteredLogins.filter(login => new Date(login.created_at) < new Date(parseInt(end)));
-    }
-
-    res.send(filteredLogins);
+    getSensorLogins(id, start, end)
+        .then(({ rows }) => {
+            if (rows.length > 0) {
+                res.send(rows);
+            } else {
+                res.send({
+                    error: "No results"
+                });
+            }
+        })
+        .catch(({ status, msg, error }) => {
+            console.error(error);
+            res.status(status).send(msg);
+        })
 });
 
 router.put("/:id", (req, res) => {
@@ -70,17 +73,20 @@ router.put("/:id", (req, res) => {
         return;
     }
 
-    const sensorIdx = sensorData.findIndex((sensor) => id === `${sensor.id}`);
-    if (sensorIdx === -1) {
-        res.status(404).send({
-            error: "Not found"
+    updateSensorPosition(id, latitude, longitude)
+        .then(({ rowCount }) => {
+            if (rowCount > 0) {
+                res.send("Update was successful!");
+            } else {
+                res.send("No rows were updated!");
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).send({
+                error: "Internal server error"
+            });
         });
-        return;
-    }
-    const sensor = { ...sensorData[sensorIdx], latitude, longitude };
-    sensorData[sensorIdx] = sensor;
-
-    res.send(sensor);
 })
 
 module.exports = router;
