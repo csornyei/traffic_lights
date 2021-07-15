@@ -4,22 +4,7 @@ const {
     getSensorLogins,
     updateSensorPosition
 } = require("./sensorModel");
-const sensorData = require("./sensors.json");
-const logins = require("./logins.json").map(login => {
-    /*  I created a mockup JSON,
-        but as I later saw the client side require
-        to show data for the last 2 weeks
-        So I decided to make sure there is data
-        for this time period
-    */
-    const THREE_WEEKS_IN_MS = 3 * 7 * 24 * 60 * 60 * 1000;
-    const dateThreeWeeksAgo = Date.now() - THREE_WEEKS_IN_MS;
-    login.created_at = Math.floor(
-        Math.random() * (
-            Date.now() - (dateThreeWeeksAgo)
-        ) + dateThreeWeeksAgo);
-    return login;
-});
+const { getSensorStatus } = require("./socketApi");
 
 const router = Router();
 
@@ -41,6 +26,11 @@ router.get("/", (_, res) => {
             })
         });
 });
+
+router.get("/:id/status", (req, res) => {
+    getSensorStatus(req.params.id);
+    res.send("Hello");
+})
 
 router.get("/:id", (req, res) => {
     const { start, end } = req.query;

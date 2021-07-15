@@ -11,6 +11,17 @@ const getAllSensor = () => {
     })
 }
 
+const getSensorIDs = () => {
+    return new Promise((resolve, reject) => {
+        query("SELECT id FROM sensor", (error, result) => {
+            if (error) {
+                reject(error);
+            }
+            resolve(result);
+        })
+    })
+}
+
 const getSensorLogins = (sensorId, startDate, endDate) => {
     return new Promise((resolve, reject) => {
         if (!sensorId) {
@@ -29,9 +40,6 @@ const getSensorLogins = (sensorId, startDate, endDate) => {
             parameters.push(endDate);
             queryString += ` AND created_at < $${parameters.length}`;
         }
-
-        console.log(queryString);
-        console.log(parameters);
 
         query(queryString, parameters, (error, result) => {
             if (error) {
@@ -59,6 +67,7 @@ const updateSensorPosition = (sensorId, latitude, longitude) => {
 }
 
 module.exports = {
+    getSensorIDs,
     getAllSensor,
     getSensorLogins,
     updateSensorPosition
