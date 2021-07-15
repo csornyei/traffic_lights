@@ -50,7 +50,7 @@ io.on(EVENTS.CONNECT, (socket) => {
         console.log("New client connected!");
 
         socket.on(EVENTS.CLIENT_SENSOR_STATUS, (id) => {
-            io.to(ROOMS.SENSORS).emit(EVENTS.REQ_SENSOR_STATUS, sensorId);
+            io.to(ROOMS.SENSORS).emit(EVENTS.REQ_SENSOR_STATUS, id);
         })
     }
 

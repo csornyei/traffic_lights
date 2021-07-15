@@ -10,7 +10,6 @@ function Map({ center, zoom }) {
     useEffect(() => {
         (async () => {
             const { data } = await axios.get("/");
-            console.log(data);
             setMarkers(data);
         })();
     }, []);

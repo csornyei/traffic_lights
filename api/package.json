@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest --watchAll --no-cache",
     "start": "node index.js",
-    "dev": "npx nodemon index.js"
+    "dev": "NODE_ENV=development npx nodemon index.js"
   },
   "author": "Mate Csornyei <mate@csornyei.com> (https://csornyei.com/)",
   "license": "ISC",
