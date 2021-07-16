@@ -1,4 +1,5 @@
 const io = require("socket.io-client");
+const winston = require("winston");
 require("dotenv").config();
 
 const EVENTS = {
@@ -17,6 +18,21 @@ const sensorIds = [];
 const REMOVE_OLD_LOGIN_TIMEOUT = 1000 * 60 * 60 * 24 * 5;
 const CREATE_NEW_LOGIN_TIMEOUT = 1000 * 60;
 
+const logger = winston.createLogger({
+    level: 'info',
+    format: winston.format.json(),
+    defaultMeta: { service: 'user-service' },
+    transports: [
+        //
+        // - Write all logs with level `error` and below to `error.log`
+        // - Write all logs with level `info` and below to `combined.log`
+        //
+        new winston.transports.File({ filename: 'error.log', level: 'error' }),
+        new winston.transports.File({ filename: 'combined.log' }),
+        new winston.transports.Console({ format: winston.format.simple() })
+    ]
+});
+
 function removeOldLogins() {
     const before = new Date(Date.now() - 1000 * 60 * 60 * 24 * 5);
 
@@ -28,7 +44,7 @@ function removeOldLogins() {
     const seconds = before.getSeconds() < 10 ? `0${before.getSeconds()}` : `${before.getSeconds()}`;
 
     socket.emit(EVENTS.REMOVE_OLD_LOGINS, `${year}-${month}-${day} ${hour}:${minutes}:${seconds}`);
-    console.log("Removing old logins");
+    logger.log("info", "Removing old logins");
     setTimeout(removeOldLogins, REMOVE_OLD_LOGIN_TIMEOUT);
 }
 
@@ -71,7 +87,7 @@ function createNewLogins() {
         }
         logins.push({ id, type, content });
     }
-    console.log(`Creating ${logins.length} new logins`);
+    logger.log("info", `Creating ${logins.length} new logins`);
     socket.emit(EVENTS.NEW_LOGIN, logins);
 
     setTimeout(createNewLogins, CREATE_NEW_LOGIN_TIMEOUT * (Math.random() * 5 + 1))
@@ -85,14 +101,18 @@ const socket = io.connect("https://traffic-lights-csornyei.herokuapp.com/", {
 });
 
 socket.on(EVENTS.SENSOR_IDS, (ids) => {
-    console.log("Sensor IDs arrived!");
+    logger.log("info", "Sensor IDs arrived!");
     ids.forEach(({ id }) => {
         sensorIds.push(id);
     });
 });
 
+socket.onAny((eventName) => {
+    logger.log("info", `${eventName}`);
+})
+
 socket.on(EVENTS.REQ_SENSOR_STATUS, (id) => {
-    console.log(EVENTS.REQ_SENSOR_STATUS, id);
+    logger.log("info", `${EVENTS.REQ_SENSOR_STATUS}, ${id}`);
     const rand = Math.random();
     let status = "unknown state";
     if (rand > 0.6) {
