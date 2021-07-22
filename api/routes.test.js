@@ -3,7 +3,7 @@ const app = require("./app");
 const sensorData = require("./sensors.json");
 const logins = require("./logins.json");
 
-describe('GET /api/', () => {
+/* describe('GET /api/', () => {
     it("returns the sensors", async () => {
         const { body } = await request(app)
             .get("/api/")
@@ -93,4 +93,4 @@ describe('GET /api/:id', () => {
         expect(body.length).toBe(0);
         expect(body).toStrictEqual([]);
     })
-})
+}) */

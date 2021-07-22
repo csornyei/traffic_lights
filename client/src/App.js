@@ -1,15 +1,18 @@
 import Map from "./Map";
+import { StateProvider } from "./state";
 
 function App() {
   return (
     <div>
-      <Map
-        zoom={11}
-        center={{
-          lat: 52.3558,
-          lng: 4.8884
-        }}
-      ></Map>
+      <StateProvider>
+        <Map
+          zoom={11}
+          center={{
+            lat: 52.3558,
+            lng: 4.8884
+          }}
+        />
+      </StateProvider>
     </div>
   );
 }

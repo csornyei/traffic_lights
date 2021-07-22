@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import styled from "styled-components";
+import { StateContext } from "./state";
 import axios from "./axios";
 
 const TrafficLight = styled.div`
@@ -62,6 +63,8 @@ function Marker({ id, status, $hover }) {
         green: 0,
         errors: 0
     });
+    const [currentStatus, setCurrentStatus] = useState(status);
+    const { state: { socket } } = useContext(StateContext);
 
     const now = Date.now();
     const twoWeeksAgo = Date.now() - (2 * 7 * 24 * 60 * 60 * 1000);
@@ -69,7 +72,7 @@ function Marker({ id, status, $hover }) {
     useEffect(() => {
         if ($hover) {
             (async () => {
-                const { data } = await axios.get(`/${id}?start=${twoWeeksAgo}&end=${now}`);
+                const { data } = await axios.get(`/${id}?start=${getFormatedDate(twoWeeksAgo)}&end=${getFormatedDate(now)}`);
                 const statuses = {
                     red: 0,
                     yellow: 0,
@@ -103,13 +106,23 @@ function Marker({ id, status, $hover }) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [$hover, id]);
 
+    const requestCurrentStatus = (id) => {
+        socket.emit("clientSensorStatus", id);
+    }
+
+    socket.on("sensorStatusUpdate", (res) => {
+        if (res.id === id) {
+            setCurrentStatus(res.status);
+        }
+    })
+
     return (
-        <TrafficLight>
+        <TrafficLight onClick={() => requestCurrentStatus(id)}>
             <Container>
                 <LightsContainer>
-                    <Light color="#ff0000" on={status === "red"} />
-                    <Light color="#ffff00" on={status === "yellow"} />
-                    <Light color="#00ff00" on={status === "green"} />
+                    <Light color="#ff0000" on={currentStatus === "red"} />
+                    <Light color="#ffff00" on={currentStatus === "yellow"} />
+                    <Light color="#00ff00" on={currentStatus === "green"} />
                 </LightsContainer>
                 {$hover ? <DataPopup>
                     <StatusText>Data for sensor #{id} between</StatusText>

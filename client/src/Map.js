@@ -10,7 +10,6 @@ function Map({ center, zoom }) {
     useEffect(() => {
         (async () => {
             const { data } = await axios.get("/");
-
             setMarkers(data);
         })();
     }, []);
@@ -18,9 +17,9 @@ function Map({ center, zoom }) {
     const mapMarkers = markers.map(marker => {
         return (
             <Marker
-                key={marker.id}
-                id={marker.id}
-                status={marker.status.content}
+                key={marker.sensor_id}
+                id={marker.sensor_id}
+                status={marker.content}
                 lat={marker.latitude}
                 lng={marker.longitude}
             />
